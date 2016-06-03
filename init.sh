@@ -22,6 +22,7 @@ if [ -d /var/lib/mysql/pathfinder ]; then
 #exec "$@"
 exec /usr/bin/supervisord --nodaemon
 else
+
    		if [ "$MYSQL_PASS" = "**Random**" ]; then
         unset MYSQL_PASS
     fi
@@ -40,21 +41,12 @@ else
     echo "    mysql -u$MYSQL_USER -p$PASS -h<host> -P<port>"
     echo ""
     echo "Please remember to change the above password as soon as possible!"
-    echo "MySQL user 'root' has no password but only allows local connections"
     echo "========================================================================"
 
-
-sed -i 's/DB_NAME                     =/DB_NAME                     = '$MYSQL_DATABASE'              /' /var/www/app/environment.ini
-sed -i 's/URL                         =   https:\/\/www.pathfinder-w.space/URL                         = http:\/\/'$HOSTNAME'              /' /var/www/app/environment.ini
-sed -i 's/DB_USER                     =/DB_USER                     = '$MYSQL_USER'             /' /var/www/app/environment.ini
-sed -i 's/DB_PASS                     =/DB_PASS                     = '$PASS'              /' /var/www/app/environment.ini
-sed -i 's/DB_CCP_NAME                 =/DB_CCP_NAME                 = sde              /' /var/www/app/environment.ini
-sed -i 's/DB_CCP_USER                 =/DB_CCP_USER                 = '$MYSQL_USER'              /' /var/www/app/environment.ini
-sed -i 's/DB_CCP_PASS                 =/DB_CCP_PASS                 = '$PASS'              /' /var/www/app/environment.ini
-sed -i 's/SSO_CCP_CLIENT_ID           =/SSO_CCP_CLIENT_ID           = '$SSO_CCP_CLIENT_ID'              /' /var/www/app/environment.ini
-sed -i 's/SSO_CCP_SECRET_KEY          =/SSO_CCP_SECRET_KEY          = '$SSO_CCP_SECRET_KEY'              /' /var/www/app/environment.ini
-wget https://github.com/exodus4d/pathfinder/raw/develop/export/sql/eve_citadel_min.sql.zip &&  unzip eve_citadel_min.sql.zip &&  mysql -u$MYSQL_USER -p$PASS -e "create database sde CHARACTER SET utf8 COLLATE utf8_general_ci" &&  mysql -u$MYSQL_USER -p$PASS sde < eve_citadel_min.sql
-echo "curl -kv http://localhost/cron" > /etc/crontab  
+git clone https://github.com/exodus4d/pathfinder.git /var/www
+chown -R www-data:www-data /var/www
+wget https://github.com/exodus4d/pathfinder/raw/master/export/sql/eve_citadel_min.sql.zip &&  unzip eve_citadel_min.sql.zip &&  mysql -u$MYSQL_USER -p$PASS -e "create database sde CHARACTER SET utf8 COLLATE utf8_general_ci" &&  mysql -u$MYSQL_USER -p$PASS sde < eve_citadel_min.sql
+echo "* * * * * curl -kv http://localhost/cron >/dev/null 2>&1" > /etc/crontab  
 
 
 echo @a
@@ -71,5 +63,31 @@ else
   echo "place mysqld in supervisord.conf ..."
   echo "$@" >> /etc/supervisor/conf.d/supervisord.conf
 fi
+echo "fastcgi_param   PF-ENV-URL                '$HOSTNAME';" >> /var/www/develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-DEBUG                3;" >> /var/www/develop-pathfinder.conf
+
+
+
+echo "fastcgi_param   PF-ENV-DB_DNS  				      'mysql:host=localhost;port=3306;dbname=';" >> /var/www/develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-DB_NAME                '$MYSQL_DATABASE';" >> /var/www/develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-DB_USER                'admin';" >> /var/www/develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-DB_PASS                '$PASS';" >> /var/www/develop-pathfinder.conf
+
+
+echo "fastcgi_param   PF-ENV-DB_CCP_DNS  			    'mysql:host=localhost;port=3306;dbname=';" >> /var/www/develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-DB_CCP_NAME                'sde';" >> /var/www/develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-DB_CCP_USER                'admin';" >> /var/www/develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-DB_CCP_PASS                '$PASS';" >> /var/www/develop-pathfinder.conf
+
+echo "fastcgi_param   PF-ENV-BASE                 '';" >> /var/www/develop-pathfinder.conf
+
+echo "fastcgi_param   PF-ENV-SSO_CCP_CLIENT_ID                '$SSO_CCP_CLIENT_ID';" >> /var/www/develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-SSO_CCP_SECRET_KEY                '$SSO_CCP_SECRET_KEY';" >> /var/www/develop-pathfinder.conf
+
+echo "fastcgi_param   PF-ENV-CCP_CREST_URL                'https://crest-tq.eveonline.com';" >> /var/www/develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-SSO_CCP_URL                'https://login.eveonline.com';" >> /var/www/develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-CCP_XML                'https://api.eveonline.com';" >> /var/www/develop-pathfinder.conf
+sed -i 's/GET @setup:/;GET @setup:/' /var/www/app/routes.ini
+
 exec /usr/bin/supervisord --nodaemon
 fi

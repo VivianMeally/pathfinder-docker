@@ -8,11 +8,9 @@ ENV LANG       en_US.UTF-8
 ENV LC_ALL	   "en_US.UTF-8"
 ENV LANGUAGE   en_US:en
 
-RUN apt-get update && apt-get install -y wget \
+RUN apt-get update && apt-get install -y  wget \
     software-properties-common python-software-properties supervisor language-pack-en-base \
     curl git vim nfs-kernel-server nfs-common unzip pwgen 
-
-RUN mkdir -p  /var/log/supervisor /var/log/nginx /run/php 
 
 ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile \
@@ -47,17 +45,14 @@ COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY pathfinder.sql /pathfinder.sql
-RUN git clone -b develop https://github.com/exodus4d/pathfinder.git /var/www
-
-RUN sed -i 's/SERVER                      =   DEVELOP/SERVER                      =   PRODUCTION/' /var/www/app/environment.ini
-RUN sed -i 's/GET @setup:/;GET @setup:/' /var/www/app/routes.ini
-
+run mkdir /var/www
 RUN chown -R www-data:www-data /var/www
 
 VOLUME ["/var/lib/mysql"]
 ENV MYSQL_USER=admin \
     MYSQL_PASS=**Random**\
     MYSQL_DATABASE=pathfinder
+    
 COPY init.sh /
 EXPOSE 80  
 
