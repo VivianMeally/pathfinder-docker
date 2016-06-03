@@ -63,30 +63,30 @@ else
   echo "place mysqld in supervisord.conf ..."
   echo "$@" >> /etc/supervisor/conf.d/supervisord.conf
 fi
-echo "fastcgi_param   PF-ENV-URL                '$HOSTNAME';" >> /var/www/develop-pathfinder.conf
-echo "fastcgi_param   PF-ENV-DEBUG                3;" >> /var/www/develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-URL                '$HOSTNAME';" >> /develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-DEBUG                3;" >> /develop-pathfinder.conf
 
 
 
-echo "fastcgi_param   PF-ENV-DB_DNS  				      'mysql:host=localhost;port=3306;dbname=';" >> /var/www/develop-pathfinder.conf
-echo "fastcgi_param   PF-ENV-DB_NAME                '$MYSQL_DATABASE';" >> /var/www/develop-pathfinder.conf
-echo "fastcgi_param   PF-ENV-DB_USER                'admin';" >> /var/www/develop-pathfinder.conf
-echo "fastcgi_param   PF-ENV-DB_PASS                '$PASS';" >> /var/www/develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-DB_DNS  				      'mysql:host=localhost;port=3306;dbname=';" >> /develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-DB_NAME                '$MYSQL_DATABASE';" >> /develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-DB_USER                'admin';" >> /develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-DB_PASS                '$PASS';" >> /develop-pathfinder.conf
 
 
-echo "fastcgi_param   PF-ENV-DB_CCP_DNS  			    'mysql:host=localhost;port=3306;dbname=';" >> /var/www/develop-pathfinder.conf
-echo "fastcgi_param   PF-ENV-DB_CCP_NAME                'sde';" >> /var/www/develop-pathfinder.conf
-echo "fastcgi_param   PF-ENV-DB_CCP_USER                'admin';" >> /var/www/develop-pathfinder.conf
-echo "fastcgi_param   PF-ENV-DB_CCP_PASS                '$PASS';" >> /var/www/develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-DB_CCP_DNS  			    'mysql:host=localhost;port=3306;dbname=';" >> /develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-DB_CCP_NAME                'sde';" >> /develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-DB_CCP_USER                'admin';" >> /develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-DB_CCP_PASS                '$PASS';" >> /develop-pathfinder.conf
 
-echo "fastcgi_param   PF-ENV-BASE                 '';" >> /var/www/develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-BASE                 '';" >> /develop-pathfinder.conf
 
-echo "fastcgi_param   PF-ENV-SSO_CCP_CLIENT_ID                '$SSO_CCP_CLIENT_ID';" >> /var/www/develop-pathfinder.conf
-echo "fastcgi_param   PF-ENV-SSO_CCP_SECRET_KEY                '$SSO_CCP_SECRET_KEY';" >> /var/www/develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-SSO_CCP_CLIENT_ID                '$SSO_CCP_CLIENT_ID';" >> /develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-SSO_CCP_SECRET_KEY                '$SSO_CCP_SECRET_KEY';" >> /develop-pathfinder.conf
 
-echo "fastcgi_param   PF-ENV-CCP_CREST_URL                'https://crest-tq.eveonline.com';" >> /var/www/develop-pathfinder.conf
-echo "fastcgi_param   PF-ENV-SSO_CCP_URL                'https://login.eveonline.com';" >> /var/www/develop-pathfinder.conf
-echo "fastcgi_param   PF-ENV-CCP_XML                'https://api.eveonline.com';" >> /var/www/develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-CCP_CREST_URL                'https://crest-tq.eveonline.com';" >> /develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-SSO_CCP_URL                'https://login.eveonline.com';" >> /develop-pathfinder.conf
+echo "fastcgi_param   PF-ENV-CCP_XML                'https://api.eveonline.com';" >> /develop-pathfinder.conf
 sed -i 's/GET @setup:/;GET @setup:/' /var/www/app/routes.ini
 
 exec /usr/bin/supervisord --nodaemon
