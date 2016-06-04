@@ -11,7 +11,7 @@ ENV LANGUAGE   en_US:en
 RUN apt-get update && apt-get install -y  wget \
     software-properties-common python-software-properties supervisor language-pack-en-base \
     curl git vim nfs-kernel-server nfs-common unzip pwgen 
-
+RUN mkdir -p  /var/log/supervisor /var/log/nginx /run/php 
 ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile \
     && echo "/var/www *(rw,async,no_subtree_check,insecure)" >> /etc/exports \
